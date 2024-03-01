@@ -1,8 +1,8 @@
+#include "queue.h"
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "queue.h"
 
 /* Notice: sometimes, Cppcheck would find the potential NULL pointer bugs,
  * but some of them cannot occur. You can suppress them by adding the
@@ -120,6 +120,17 @@ int q_size(struct list_head *head)
 bool q_delete_mid(struct list_head *head)
 {
     // https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/
+    if (!head || list_empty(head))
+        return false;
+    struct list_head *tmp = head;
+    int num = ceil(q_size(head) / 2) + 1;
+    while (num) {
+        tmp = tmp->next;
+        num--;
+    }
+    element_t *node = list_entry(tmp, element_t, list);
+    list_del(&node->list);
+    q_release_element(node);
     return true;
 }
 
