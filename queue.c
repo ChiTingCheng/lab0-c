@@ -66,13 +66,24 @@ bool q_insert_tail(struct list_head *head, char *s)
     INIT_LIST_HEAD(&(node->list));
     list_add_tail(&node->list, head);
     return true;
-
 }
 
 /* Remove an element from head of queue */
 element_t *q_remove_head(struct list_head *head, char *sp, size_t bufsize)
 {
-    return NULL;
+    if (!head || !sp)
+        return NULL;
+    element_t *node = list_first_entry(head, element_t, list);
+    size_t sz = sizeof(char) * strlen(node->value) + 1;
+    if (sz > bufsize) {
+        strncpy(sp, node->value, bufsize - 1);
+        sp[bufsize - 1] = '\0';
+    } else {
+        strncpy(sp, node->value, sz - 1);
+        sp[sz - 1] = '\0';
+    }
+    list_del(&node->list);
+    return node;
 }
 
 /* Remove an element from tail of queue */
