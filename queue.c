@@ -10,6 +10,7 @@
  *   cppcheck-suppress nullPointer
  */
 
+void merge(struct list_head *first, struct list_head *second);
 
 /* Create an empty queue */
 struct list_head *q_new()
@@ -219,8 +220,52 @@ void q_reverseK(struct list_head *head, int k)
     }
 }
 
+void mergesort(struct list_head *first, struct list_head *second)
+{
+    if (!first || !second) {
+        return;
+    }
+    LIST_HEAD(new);
+
+    while (!list_empty(first) && !list_empty(second)) {
+        element_t *node1, *node2, *tmp;
+        node1 = list_first_entry(first, element_t, list);
+        node2 = list_first_entry(second, element_t, list);
+        tmp = strcmp(node1->value, node2->value) < 0 ? node1 : node2;
+        list_move_tail(&tmp->list, &new);
+    }
+    list_splice_tail_init(first, &new);
+    list_splice_tail_init(second, &new);
+    list_splice(&new, first);
+    return;
+}
 /* Sort elements of queue in ascending/descending order */
-void q_sort(struct list_head *head, bool descend) {}
+void q_sort(struct list_head *head, bool descend)
+{
+    if (!head || list_empty(head) || list_is_singular(head)) {
+        return;
+    }
+    LIST_HEAD(first);
+    LIST_HEAD(second);
+    int s = q_size(head) / 2 - 1;
+    struct list_head *tail = NULL;
+    list_for_each (tail, head) {
+        if (s < 0) {
+            break;
+        }
+        s--;
+    }
+    list_cut_position(&first, head, tail->prev);
+    list_cut_position(&second, tail->prev, head->prev);
+    q_sort(&first, descend);
+    q_sort(&second, descend);
+    mergesort(&first, &second);
+    list_splice_init(&first, head);
+    if (descend) {
+        q_reverse(head);
+    }
+    return;
+}
 
 /* Remove every node which has a node with a strictly less value anywhere to
  * the right side of it */
