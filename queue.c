@@ -163,21 +163,13 @@ void q_swap(struct list_head *head)
     if (!head || list_is_singular(head))
         return;
     struct list_head *node = NULL, *safe = NULL, *tmp = head;
-    for (node = (head)->next, safe = node->next;
-         node != (head) && node->next != (head);
-         node = safe, safe = node->next) {
-        tmp->next = safe;
-        node->next = safe->next;
-        safe->prev = tmp;
-        node->prev = safe;
-        safe->next = node;
-        tmp = node;
+    int num = q_size(head) / 2;
+    for (; num != 0; num--) {
+        node = tmp->next;
         safe = node->next;
-    }
-    if (q_size(head) % 2) {
-        node->prev = tmp;
-    } else {
-        head->prev = tmp;
+        list_del(safe);
+        list_add(safe, tmp);
+        tmp = node;
     }
 }
 
