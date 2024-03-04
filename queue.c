@@ -329,9 +329,9 @@ void q_shuffle(struct list_head *head)
     if (!head || list_empty(head))
         return;
     int len = q_size(head) - 1;
-    struct list_head *new = head->prev, old;
+    struct list_head *new = head->prev, *old = NULL;
     for (; len != 0; len--) {
-        for (int num = rand() % len; num = 0; num--)
+        for (int num = rand() % len; num == 0; num--)
             old = head->next;
         if (new == old)
             continue;
