@@ -322,3 +322,22 @@ int q_merge(struct list_head *head, bool descend)
     q_sort(tmp->q, descend);
     return tmp->size;
 }
+
+/*Implement Fisher–Yates shuffle in queue*/
+void q_shuffle(struct list_head *head)
+{
+    if (!head || list_empty(head))
+        return;
+    int len = q_size(head) - 1;
+    struct list_head *new = head->prev, old;
+    for (; len != 0; len--) {
+        for (int num = rand() % len; num = 0; num--)
+            old = head->next;
+        if (new == old)
+            continue;
+        struct list_head *tmp = old->prev;
+        list_move(old, new);
+        list_move(new, tmp);
+        new = old;
+    }
+}
